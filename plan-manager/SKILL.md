@@ -7,8 +7,12 @@ description: >
   "aggiungi al plan", "modifica il plan", "crea il plan", "inizializza il plan",
   "step in corso", "blocco sul plan", "rischio", "decisione architetturale",
   "aggiorna obiettivo", "sposta step", "riordina task", "prossimo step",
-  "cosa devo fare dopo", "aggiorna stato", "ho finito lo step".
+  "cosa devo fare dopo", "aggiorna stato", "ho finito lo step",
+  "chiudi la sessione", "fine sessione", "chiudiamo", "sessione terminata",
+  "salva la sessione", "registro sessione", "log sessione".
   Legge il plan.md esistente, applica le modifiche richieste e lo riscrive.
+  In caso di chiusura sessione, aggiorna anche session-history.md con un
+  riepilogo di quanto fatto.
 allowed-tools: Read, Write, Edit, Bash
 model: claude-opus-4-5
 ---
@@ -18,9 +22,11 @@ model: claude-opus-4-5
 ## Quando Usare
 - L'utente vuole creare un piano di progetto da zero
 - L'utente vuole aggiornare step, stati, decisioni o note nel plan esistente
-- Fine sessione (in combo con update-docs)
+- Fine sessione (in combo con update-docs) → aggiorna anche session-history.md
 - Keyword trigger: "plan", "step", "completato", "in corso", "blocco",
-  "rischio", "decisione", "prossimo task", "cosa faccio dopo", "aggiorna il piano"
+  "rischio", "decisione", "prossimo task", "cosa faccio dopo", "aggiorna il piano",
+  "chiudi la sessione", "fine sessione", "chiudiamo", "sessione terminata",
+  "salva la sessione"
 
 ## Obiettivo
 Mantenere `plan.md` come **fonte di verità operativa** della sessione:
@@ -145,7 +151,46 @@ Trigger: "ricorda che", "nota importante", "nella prossima sessione", "non dimen
 Trigger: "rischio", "potrebbe essere un problema", "attenzione a", "potremmo avere problemi con"
 → Aggiungi riga nella tabella "Blocchi e Rischi" con tipo RISCHIO
 
-**9. Sposta step in backlog**
+**9. Chiudi sessione e aggiorna session-history.md**
+Trigger: "chiudi la sessione", "fine sessione", "chiudiamo", "sessione terminata",
+         "salva la sessione", "registro sessione", "log sessione"
+
+→ Leggi plan.md per capire cosa è stato fatto (step completati, decisioni, note)
+→ Leggi git log (ultimi commit della sessione) e qualsiasi altra fonte di contesto disponibile
+→ Crea o aggiorna `session-history.md` nella root del progetto
+
+**Struttura di una entry in session-history.md:**
+```markdown
+## Sessione YYYY-MM-DD — [titolo sintetico della sessione, max 60 char]
+
+**Obiettivo della sessione:** [cosa si voleva fare]
+
+**Fatto:**
+- [azione concreta 1 — con path/componente se rilevante]
+- [azione concreta 2]
+- ...
+
+**Decisioni prese:**
+- [decisione + motivazione breve] (se nessuna: ometti la sezione)
+
+**Blocchi incontrati:**
+- [blocco + come risolto o lasciato aperto] (se nessuno: ometti la sezione)
+
+**Stato al termine:** [avanzamento: N/M step, X%]
+
+**Prossimo step:** [titolo e breve descrizione del prossimo step]
+
+---
+```
+
+→ Le entry sono in ordine **cronologico inverso** (più recente in cima)
+→ Se session-history.md non esiste, crealo con header:
+   `# Session History — [Nome Progetto]`
+→ Inserisci la nuova entry subito dopo l'header (o in cima alla lista)
+→ Aggiorna anche plan.md: "Note per la Prossima Sessione" deve riflettere
+   il prossimo step da affrontare
+
+**10. Sposta step in backlog**
 Trigger: "questo non è prioritario", "metti nel backlog", "per dopo"
 → Cambia stato a 💡 Idea/Backlog (o sposta in sezione Backlog)
 
@@ -188,7 +233,8 @@ Non contare i 💡 Backlog nel denominatore
 2. Interpreta il prompt dell'utente e identifica l'operazione/i da eseguire
    (possono essere multiple: es. "segna step 3 come fatto e aggiungi step 6")
 
-3. Applica le modifiche mantenendo la struttura canonica
+3. SE è una chiusura sessione → vai al Workflow Chiusura Sessione (sotto)
+   ALTRIMENTI → applica le modifiche standard al plan.md
 
 4. Ricalcola:
    - Avanzamento percentuale
@@ -200,6 +246,43 @@ Non contare i 💡 Backlog nel denominatore
 6. Conferma all'utente in chat:
    "[operazione eseguita] → plan.md aggiornato.
     Avanzamento: N/M (X%)
+    Prossimo step: [titolo]"
+```
+
+### Workflow Chiusura Sessione
+
+```
+1. Leggi plan.md per estrarre:
+   - Step completati in questa sessione (confronta stato precedente se noto,
+     altrimenti prendi tutti i ✅ recenti e le attività discusse in chat)
+   - Decisioni prese
+   - Blocchi incontrati
+   - Stato avanzamento corrente
+   - Prossimo step
+
+2. Leggi git log --oneline -20 per avere i commit della sessione (se repo git)
+
+3. Costruisci la entry per session-history.md:
+   - Data: data odierna (YYYY-MM-DD)
+   - Titolo: sintetico, max 60 char, descrive il tema principale della sessione
+   - Fatto: lista concreta di azioni, con path/componenti dove utile
+   - Decisioni: solo se ci sono state
+   - Blocchi: solo se ci sono stati
+   - Stato al termine: avanzamento dal plan.md
+   - Prossimo step: dal campo "Prossimo Step" di plan.md
+
+4. Crea o aggiorna session-history.md:
+   - Se non esiste: crea con header "# Session History — [Nome Progetto]"
+   - Inserisci la nuova entry in cima (dopo l'header)
+   - Le entry precedenti rimangono intatte sotto
+
+5. Aggiorna plan.md:
+   - "Note per la Prossima Sessione" → punta al prossimo step con dettagli concreti
+   - "Last updated" → data odierna
+
+6. Conferma in chat:
+   "Sessione chiusa. session-history.md aggiornato.
+    Fatto oggi: [N azioni principali]
     Prossimo step: [titolo]"
 ```
 
