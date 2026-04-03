@@ -7,7 +7,7 @@ description: >
   "salva il progresso", "prima di chiudere", "wrap up", "aggiorna la documentazione",
   "sincronizza i file md", "fine lavoro", "documenta quello che abbiamo fatto",
   "chiudiamo", "aggiorna i file prima di smettere".
-  Aggiorna CLAUDE.md, ARCHITECTURE.md e plan.md con il contesto della sessione corrente.
+  Aggiorna CLAUDE.md, ARCHITECTURE.md, plan.md e session-history.md con il contesto della sessione corrente.
 allowed-tools: Read, Glob, Grep, Bash, Edit, Write, Task
 model: claude-sonnet-4-5
 ---
@@ -27,6 +27,7 @@ Aggiornare in modo accurato e conciso:
 - `CLAUDE.md` — memoria operativa aggiornata con nuove scoperte
 - `ARCHITECTURE.md` — riflette cambiamenti strutturali avvenuti nella sessione
 - `plan.md` — task completati, in corso, e prossimi passi
+- `session-history.md` — log cronologico delle sessioni di lavoro
 
 ---
 
@@ -44,6 +45,7 @@ Aggiornare in modo accurato e conciso:
    - CLAUDE.md
    - ARCHITECTURE.md
    - plan.md
+   - session-history.md
 
 3. Leggi i file modificati nella sessione:
    git diff --name-only HEAD 2>/dev/null || \
@@ -71,7 +73,7 @@ FILE MODIFICATI IN QUESTA SESSIONE:
 [lista file]
 
 CONTENUTO ATTUALE DEI FILE:
-[contenuto CLAUDE.md, ARCHITECTURE.md, plan.md]
+[contenuto CLAUDE.md, ARCHITECTURE.md, plan.md, session-history.md]
 
 ---
 
@@ -200,11 +202,52 @@ Formato: `- [YYYY-MM-DD] descrizione del task completato`
 
 ---
 
+### TASK 4: Aggiorna session-history.md
+
+Questo file mantiene un log cronologico di tutte le sessioni di lavoro.
+
+**Struttura di una entry:**
+```markdown
+## Sessione YYYY-MM-DD — [titolo sintetico, max 60 char]
+
+**Obiettivo della sessione:** [cosa si voleva fare]
+
+**Fatto:**
+- [azione concreta 1 — con path/componente se rilevante]
+- [azione concreta 2]
+- ...
+
+**Decisioni prese:**
+- [decisione + motivazione breve] (ometti se nessuna)
+
+**Blocchi incontrati:**
+- [blocco + come risolto o lasciato aperto] (ometti se nessuno)
+
+**Stato al termine:** [avanzamento: N/M step, X% — oppure descrizione libera]
+
+**Prossimo step:** [titolo e breve descrizione del prossimo step]
+
+---
+```
+
+Regole di aggiornamento:
+- Le entry sono in ordine **cronologico inverso** (più recente in cima)
+- Se session-history.md non esiste, crealo con header:
+  `# Session History — [Nome Progetto]`
+- Inserisci la nuova entry subito dopo l'header
+- Le entry precedenti rimangono intatte sotto
+- Il titolo deve essere sintetico e descrivere il tema principale della sessione
+- "Fatto" va ricavato dal contesto della sessione: commit git, file modificati, attività discusse
+- "Decisioni prese" e "Blocchi incontrati": ometti le sezioni se vuote
+
+---
+
 OUTPUT:
 1. File CLAUDE.md aggiornato
 2. File ARCHITECTURE.md aggiornato (o nota che non serve)
 3. File plan.md aggiornato
-4. Stampa un summary di cosa hai modificato in ogni file
+4. File session-history.md aggiornato con la nuova entry
+5. Stampa un summary di cosa hai modificato in ogni file
 ```
 
 ---
@@ -212,12 +255,13 @@ OUTPUT:
 ## Fase 3 — Conferma (Parent Agent)
 
 ```
-1. Verifica che i tre file siano stati aggiornati
+1. Verifica che i quattro file siano stati aggiornati
 2. Stampa all'utente un summary:
    "✅ Documentazione aggiornata:
    - CLAUDE.md: [cosa è cambiato]
    - ARCHITECTURE.md: [cosa è cambiato / 'nessuna modifica necessaria']
-   - plan.md: [N task completati, N nuovi task aggiunti, N in corso]"
+   - plan.md: [N task completati, N nuovi task aggiunti, N in corso]
+   - session-history.md: [sessione YYYY-MM-DD aggiunta — titolo]"
 3. Se plan.md contiene task BLOCCATI, segnalali esplicitamente
 ```
 
