@@ -1,6 +1,6 @@
 ---
 name: webapp-testing
-description: Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.
+description: "Test local web apps with Playwright. Use for UI automation, E2E smoke checks, debugging frontend behavior, capturing screenshots, or inspecting browser logs. Trigger on any request to test a web UI or automate browser actions."
 license: Complete terms in LICENSE.txt
 ---
 
