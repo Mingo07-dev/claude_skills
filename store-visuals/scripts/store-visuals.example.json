@@ -1,0 +1,84 @@
+{
+  "_nota": [
+    "Configurazione della campagna: si copia nella radice del progetto come",
+    "`store-visuals.json` e si adatta. Gli script leggono solo questo file, così",
+    "restano identici da un'app all'altra.",
+    "",
+    "Le didascalie del carosello e del video vanno concordate con chi commissiona",
+    "il lavoro PRIMA di produrre le immagini (vedi SKILL.md §1)."
+  ],
+
+  "raw_dir": "store/screenshots/raw",
+  "mockups_dir": "store/screenshots/mockups",
+  "video_dir": "store/video",
+
+  "_palette": "Toni profondi del colore di marca: il bianco della cornice e del testo deve staccare senza abbagliare.",
+  "palette": {
+    "deep": [10, 74, 110],
+    "mid": [18, 104, 148],
+    "light": [32, 138, 186],
+    "foam": [222, 243, 252]
+  },
+
+  "font": {
+    "file": "/System/Library/Fonts/Avenir Next.ttc",
+    "heavy": 8,
+    "medium": 5
+  },
+
+  "_devices": "chiave = cartella delle catture; valori = larghezza, altezza, raggio della cornice, spessore del bordo. `alias` riusa le catture di un altro formato.",
+  "devices": {
+    "ios-iphone69": { "size": [1320, 2868], "radius": 132, "bezel": 26 },
+    "ios-iphone65": { "size": [1284, 2778], "radius": 128, "bezel": 25, "alias": "ios-iphone69" },
+    "ios-ipad13": { "size": [2064, 2752], "radius": 96, "bezel": 26 },
+    "android-phone": { "size": [1080, 1920], "radius": 104, "bezel": 21 },
+    "android-tablet7": { "size": [1200, 1920], "radius": 84, "bezel": 20 },
+    "android-tablet10": { "size": [1600, 2560], "radius": 96, "bezel": 24 }
+  },
+
+  "_slides": [
+    "Una voce per slide, in ordine di caricamento. `scene` è il suffisso del file",
+    "catturato (NN-<scene>.png). `role`: `pair-start` + `pair-end` sono le due metà",
+    "della stessa cattura, inclinata a cavallo della cucitura; `solo` sta in una",
+    "slide. `caption` sopra o sotto, alternate per dare ritmo."
+  ],
+  "slides": {
+    "it": [
+      { "scene": "home", "role": "pair-start", "title": "Titolo forte\nsu due righe", "caption": "bottom" },
+      { "scene": null, "role": "pair-end", "title": "La frase\nche lo completa", "caption": "bottom" },
+      { "scene": "dettaglio", "role": "solo", "title": "Seconda funzione", "subtitle": "Una riga che spiega", "caption": "bottom" },
+      { "scene": "azione", "role": "solo", "title": "Terza funzione", "subtitle": "Una riga che spiega", "caption": "top" }
+    ],
+    "en": [
+      { "scene": "home", "role": "pair-start", "title": "Strong headline\non two lines", "caption": "bottom" },
+      { "scene": null, "role": "pair-end", "title": "The line\nthat completes it", "caption": "bottom" },
+      { "scene": "dettaglio", "role": "solo", "title": "Second feature", "subtitle": "One explaining line", "caption": "bottom" },
+      { "scene": "azione", "role": "solo", "title": "Third feature", "subtitle": "One explaining line", "caption": "top" }
+    ]
+  },
+
+  "_video": [
+    "Una didascalia per scena, in ordine. I tempi NON si scrivono qui: li ricava",
+    "`compose_video.py` dai marcatori TOUCH del pilota. `scene_ends` dice quale",
+    "tocco chiude ciascuna scena (l'ultima arriva in fondo al filmato)."
+  ],
+  "video": {
+    "scene_ends": [0, 1, 2, 3],
+    "captions": {
+      "it": [
+        ["Titolo della prima scena", "Sottotitolo che spiega"],
+        ["Seconda scena", "Sottotitolo che spiega"],
+        ["Terza scena", "Sottotitolo che spiega"],
+        ["Quarta scena", "Sottotitolo che spiega"],
+        ["Chiusura", "La funzione che distingue l'app"]
+      ],
+      "en": [
+        ["First scene title", "Explaining subtitle"],
+        ["Second scene", "Explaining subtitle"],
+        ["Third scene", "Explaining subtitle"],
+        ["Fourth scene", "Explaining subtitle"],
+        ["Closing", "What sets the app apart"]
+      ]
+    }
+  }
+}
